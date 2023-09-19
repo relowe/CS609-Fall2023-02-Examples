@@ -1,0 +1,47 @@
+Parser
+======
+< Program >    ::= < Program > < Statement >
+                   | < Statement >
+                
+< Statement >  ::= < Expression > NEWLINE
+
+< Expression > ::= < Expression > PLUS < Term >
+                   | < Expression > MINUS < Term >
+                   | < Term >
+                   
+< Term >       ::= < Term > TIMES < Factor >
+                  | < Term > DIVIDE < Factor >
+                  | < Term > MOD < Factor >
+                  | < Factor >
+                  
+< Factor >       ::= < Base > POW < Factor >
+                     | < Base >
+
+< Base >         ::= LPAREN < Expression > RPAREN
+                     | MINUS < Expression >
+                     | < Number >
+
+< Number >       ::= INTLIT
+                     | REALLIT
+
+
+Lexer
+=====
+NEWLINE      \n
+PLUS         +
+MINUS        -
+TIMES        *
+DIVIDE       /
+MOD          MOD
+POW          ^
+LPAREN       (
+RPAREN       )
+INTLIT       [0-9]+
+REALLIT      INTLIT.INTLIT
+
+Common Hidden Tokens
+====================
+EOI          End of input
+INVALID      Everything not matched
+
+- In most languages, we ignore whitespace unless it appears in the grammar

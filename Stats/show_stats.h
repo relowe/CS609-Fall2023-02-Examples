@@ -1,22 +1,21 @@
-///////////////////////////////////////////////////////////////////////////
-// File: show_stats.h
-// Purpose: Definition of the number management menu item
-///////////////////////////////////////////////////////////////////////////
-#ifndef SHOW_STATS_H
-#define SHOW_STATS_H
+#include <iostream>
 #include <vector>
-#include "menu_item.h"
-
-class Show_Stats : public Menu_Item
+ 
+int main()
 {
-public:
-    //constructor
-    Show_Stats(std::vector<double> *_numbers);
+    // Create a vector containing integers
+    std::vector<double> v = {numbers};
+ 
+    // Add two more integers to vector
+    v.push_back();
+    v.push_back();
+ 
+    // Overwrite element at position 2
+    v[number] = -1;
+ 
+    // Print out the vector
+    for (int n : v)
+        std::cout << n << ' ';
+    std::cout << '\n';
+}
 
-    //implementation of Menu_Item
-    virtual std::string label();
-    virtual void selected();
-private:
-    std::vector<double> *_numbers;
-};
-#endif

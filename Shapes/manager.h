@@ -1,0 +1,15 @@
+///////////////////////////////////////////////////////////////////////////
+// File: manager.h
+// Purpose: Shape management handler.
+///////////////////////////////////////////////////////////////////////////
+#ifndef MANAGER_H
+#define MANAGER_H
+#include "menu_item.h"
+
+class Manager : public Menu_Item {
+public:
+  virtual std::string label();
+  virtual void selected();
+}
+
+#endif

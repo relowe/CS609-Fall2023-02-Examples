@@ -62,7 +62,13 @@ type = "cppdbg"
 [languages]
 
 [languages.c]
-pattern = "**/*.{c,h}"
+pattern = "**/*.{c}"
 
 [languages.c.languageServer]
+start = "ccls"
+
+[languages.cpp]
+pattern = "**/*.{cpp,h}"
+
+[languages.cpp.languageServer]
 start = "ccls"

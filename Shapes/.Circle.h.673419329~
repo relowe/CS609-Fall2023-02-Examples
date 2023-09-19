@@ -1,0 +1,17 @@
+#ifndef CIRCLE_H
+#define CIRCLE_H
+#include "shape.h"
+#include "shape_add.h"
+
+class circle : public Shape
+{
+public:
+double radius;
+virtual double radius()=0;
+virtual double perimeter()=0;
+private:
+class();
+class(double rati)
+};
+
+#endif

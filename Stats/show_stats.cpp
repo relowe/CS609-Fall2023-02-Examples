@@ -33,5 +33,6 @@ void Show_Stats::selected()
     // print data
     std::cout << "N=" << n << std::endl
               << "Sum=" << sum << std::endl
+      
               << "Average=" << avg << std::endl;
 }

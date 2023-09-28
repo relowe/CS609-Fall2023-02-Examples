@@ -1,3 +1,4 @@
+
 // File: lexer.h
 // Purpose: A lexer for the calc programming language.
 #include <string>
@@ -27,6 +28,7 @@ enum Token {
 class Lexer_Token
 {
 public:
+  Lexer_Token();
   Lexer_Token(Token tok, const std::string &lexeme, int line, int col);
   Token tok;             // numeric token
   std::string lexeme;    // actual text
@@ -51,13 +53,27 @@ public:
 private:
   char _cur_char;    // the current character we are matching
   Lexer_Token _cur; // the current token
-  std::string _cur_lexeme;
   int _line;
   int _col;
   std::istream &_is;
 
   // read the next character from the stream
   void read();
+
+  // consume the current character and add it to the lexeme
+  void consume();
+
+  // skip insiginficant characters
+  void skip();
+
+  // attempt to match single character tokens
+  bool lex_single();
+
+  // attempt to match a number
+  bool lex_number();
+
+  // attempt to match a keyword or identifier
+  bool lex_kw_or_id();
 };
 
 #endif

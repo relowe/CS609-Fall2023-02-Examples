@@ -1,21 +1,36 @@
+To eliminate left recursion:
+
+  < A > ::= < A > a1 | < A > a2 | ... | < A > an | < B >
+  
+  < A > ::= < B > < A' >
+  < A' > ::= a1 < A' > | a2 < A' > | ... | an < A' > | ""
+
 Parser
 ======
-< Program >    ::= < Program > < Statement >
-                   | < Statement >
+< Program >    ::= < Statement > < Program' >
+
+< Program' >   ::= < Statement > < Program' >
+                   | ""
                 
 < Statement >  ::= < Expression > NEWLINE
 
-< Expression > ::= < Expression > PLUS < Term >
-                   | < Expression > MINUS < Term >
-                   | < Term >
+< Expression > ::= < Term > < Expression' >
+
+< Expression' > ::= PLUS < Term > < Expression' >
+                    | MINUS < Term > < Expression' >
+                    | ""
                    
-< Term >       ::= < Term > TIMES < Factor >
-                  | < Term > DIVIDE < Factor >
-                  | < Term > MOD < Factor >
-                  | < Factor >
+< Term >       ::= < Factor > < Term' >
+
+< Term' >      ::=  TIMES < Factor > < Term' >
+                  | DIVIDE < Factor > < Term' >
+                  | MOD < Factor > < Term' >
+                  | ""
                   
-< Factor >       ::= < Base > POW < Factor >
-                     | < Base >
+< Factor >       ::= < Base > < Factor' >
+
+< Factor' >      ::= POW < Factor >
+                     | ""
 
 < Base >         ::= LPAREN < Expression > RPAREN
                      | MINUS < Expression >

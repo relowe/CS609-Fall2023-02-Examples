@@ -6,7 +6,7 @@ int main()
 {
   Lexer lex(std::cin);
 
-  for(;;) {
+  do {
     std::cout << lex.next() << std::endl;
-  }
+  } while(lex.cur().tok != EOI);
 }

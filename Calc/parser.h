@@ -1,6 +1,7 @@
 // File: parser.h
 // Purpose: Class definition for a recursive descent parser.
 #include "lexer.h"
+#include "parse_tree.h"
 
 class Parser 
 {
@@ -9,7 +10,7 @@ public:
   Parser(Lexer *_lex);
 
   // attempt to parse the program
-  void parse();
+  Parse_Tree* parse();
 
 private:
   Lexer *_lex;    // lexer for the stream we are parsing
@@ -31,14 +32,14 @@ private:
   ////////////////////////////////////////
   // Recursive Descent Parser Rules
   ////////////////////////////////////////
-  void parse_Program();
-  void parse_Statement();
-  void parse_Expression();
-  void parse_Expression2();
-  void parse_Term();
-  void parse_Term2();
-  void parse_Factor();
-  void parse_Factor2();
-  void parse_Base();
-  void parse_Number();
+  Parse_Tree* parse_Program();
+  Parse_Tree* parse_Statement();
+  Parse_Tree* parse_Expression();
+  Parse_Tree* parse_Expression2(Parse_Tree *left);
+  Parse_Tree* parse_Term();
+  Parse_Tree* parse_Term2(Parse_Tree *left);
+  Parse_Tree* parse_Factor();
+  Parse_Tree* parse_Factor2(Parse_Tree *left);
+  Parse_Tree* parse_Base();
+  Parse_Tree* parse_Number();
 };

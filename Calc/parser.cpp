@@ -14,7 +14,7 @@ Parser::Parser(Lexer *_lex) {
 }
 
 // attempt to parse the program
-void Parser::parse() { parse_Program(); }
+Parse_Tree* Parser::parse() { return parse_Program(); }
 
 ////////////////////////////////////////
 // Lexer Convenience Interface
@@ -54,32 +54,37 @@ Lexer_Token Parser::consume() {
 < Program' >   ::= < Statement > < Program' >
                    | ""
  */
-void Parser::parse_Program() {
+Parse_Tree *Parser::parse_Program() {
+  Program *result = new Program();
+  
   // effectively, this reads statements until EOI
   while (not has(EOI)) {
-    parse_Statement();
+    result->add(parse_Statement());
   }
+
+  return result;
 }
 
 /*
 < Statement >  ::= < Expression > NEWLINE
  */
-
 // If a expression is followed by newline, then consume it and parse the
 // expression if not the system will report the error and exit.
-void Parser::parse_Statement() {
-  parse_Expression();
+Parse_Tree* Parser::parse_Statement() {
+  Parse_Tree *result = parse_Expression();
   if (must_be(NEWLINE)) {
     consume();
   }
+
+  return result;
 }
 
 /*
 < Expression > ::= < Term > < Expression' >
  */
-void Parser::parse_Expression() {
-  parse_Term();
-  parse_Expression2();
+Parse_Tree* Parser::parse_Expression() {
+  Parse_Tree *left = parse_Term();
+  return parse_Expression2(left);
 }
 
 /*
@@ -87,28 +92,33 @@ void Parser::parse_Expression() {
                     | MINUS < Term > < Expression' >
                     | ""
  */
-void Parser::parse_Expression2() {
+Parse_Tree* Parser::parse_Expression2(Parse_Tree *left) {
   if (has(PLUS)) {
     // consume the plus
     consume();
-    parse_Term();
-    parse_Expression2();
+    Add *result = new Add();
+    result->left(left);
+    result->right(parse_Term());
+    return parse_Expression2(result);
   } else if (has(MINUS)) {
     // consume the minus
     consume();
-    parse_Term();
-    parse_Expression2();
+    Subtract *result = new Subtract();
+    result->left(left);
+    result->right(parse_Term());
+    return parse_Expression2(result);
   }
 
-  // do nothingon ""
+  // do nothing on ""
+  return left;
 }
 
 /*
 < Term >       ::=  < Factor > < Term' >
  */
-void Parser::parse_Term() {
-  parse_Factor();
-  parse_Term2();
+Parse_Tree* Parser::parse_Term() {
+  Parse_Tree *left = parse_Factor();
+  return parse_Term2(left);
 }
 
 /*
@@ -117,39 +127,52 @@ void Parser::parse_Term() {
                   | MOD < Factor > < Term' >
                   | ""
  */
-void Parser::parse_Term2() {
+Parse_Tree* Parser::parse_Term2(Parse_Tree *left) {
   if (has(TIMES)) {
     consume();
-    parse_Factor();
-    parse_Term2();
+    Multiply *result = new Multiply();
+    result->left(left);
+    result->right(parse_Factor());
+    return parse_Term2(result);
   } else if (has(DIVIDE)) {
     consume();
-    parse_Factor();
-    parse_Term2();
+    Divide *result = new Divide();
+    result->left(left);
+    result->right(parse_Factor());
+    return parse_Term2(result);
   } else if (has(MOD)) {
     consume();
-    parse_Factor();
-    parse_Term2();
+    Mod *result = new Mod();
+    result->left(left);
+    result->right(parse_Factor());
+    return parse_Term2(result);
   }
+  
+  return left;
 }
 
 /*
 < Factor >       ::= < Base > < Factor' >
  */
-void Parser::parse_Factor() {
-  parse_Base();
-  parse_Factor2();
-}
+Parse_Tree* Parser::parse_Factor() {
+  Parse_Tree *left = parse_Base();
+  return parse_Factor2(left);
+} 
 
 /*
 < Factor' >      ::= POW < Factor >
                      | ""
  */
-void Parser::parse_Factor2() {
+Parse_Tree* Parser::parse_Factor2(Parse_Tree *left) {
   if (has(POW)) {
     consume();
-    parse_Factor();
+    Power *result = new Power();
+    result->left(left);
+    result->right(parse_Factor());
+    return result;
   }
+  
+  return left;
 }
 
 /*
@@ -157,18 +180,20 @@ void Parser::parse_Factor2() {
                      | MINUS < Expression >
                      | < Number >
  */
-void Parser::parse_Base() {
+Parse_Tree* Parser::parse_Base() {
   if (has(LPAREN)) {
     consume();
-    parse_Expression();
+    Parse_Tree *result = parse_Expression();
     must_be(RPAREN);
     consume();
+    return result;
   } else if (has(MINUS)) {
     consume();
-    parse_Expression();
-
+    Negation *result = new Negation();
+    result->child(parse_Expression());
+    return result;
   } else {
-    parse_Number();
+    return parse_Number();
   }
 }
 
@@ -176,10 +201,13 @@ void Parser::parse_Base() {
 < Number >       ::= INTLIT
                      | REALLIT
  */
-void Parser::parse_Number() {
+Parse_Tree* Parser::parse_Number() {
   if (has(INTLIT)) {
-    consume();
+    return new Literal(consume());
   } else if (must_be(REALLIT)) {
     consume();
+    return new Literal(consume());
   }
+  
+  return nullptr;
 }

@@ -11,5 +11,5 @@ int main()
   Parser parser(lex);
 
   // run the parser
-  parser.parse();
+  parser.parse()->print(0);
 }

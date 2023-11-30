@@ -1,15 +1,13 @@
-
 // File: lexer.h
-// Purpose: A lexer for the calc programming language.
+// Purpose: Definitions for a lexer.
+#ifndef LEXER_H
+#define LEXER_H
 #include <string>
 #include <iostream>
 
-#ifndef LEXER_H
-#define LEXER_H
-
-// Use an enumeration to implement our tokens
+// our language's tokens
 enum Token {
-  INVALID=0,
+  INVALID = 0,
   EOI,
   NEWLINE,
   PLUS,
@@ -21,59 +19,77 @@ enum Token {
   LPAREN,
   RPAREN,
   INTLIT,
-  REALLIT
+  REALLIT,
+  EQUAL,
+  DISPLAY,
+  INPUT,
+  ID,
+  DOT,
+  NEW,
+  RECORD,
+  END,
+  FIELD,
+  IF,
+  WHILE,
+  NE,
+  LT,
+  GT,
+  LTE,
+  GTE
 };
 
-// The actual tokens emitted by our lexer
+// Tokens as emitted by the lexer
 class Lexer_Token
 {
 public:
   Lexer_Token();
   Lexer_Token(Token tok, const std::string &lexeme, int line, int col);
-  Token tok;             // numeric token
-  std::string lexeme;    // actual text
-  int line;              // line of the token
-  int col;               // column token
+  Token tok;
+  std::string lexeme;
+  int line;
+  int col;
 };
 std::ostream &operator<<(std::ostream &os, const Lexer_Token &t);
 
-
+// Lexer definition
 class Lexer
 {
 public:
-  // constructor
   Lexer(std::istream &_is);
 
-  // get the next token in the stream
+  //return the next token in the stream
   Lexer_Token next();
 
-  // get the current token
+  //return the current token
   Lexer_Token cur();
 
 private:
-  char _cur_char;    // the current character we are matching
-  Lexer_Token _cur; // the current token
+  std::istream &_is;
+  char _cur_char;
+  Lexer_Token _cur;
   int _line;
   int _col;
-  std::istream &_is;
 
-  // read the next character from the stream
+  // get the next character from the stream
   void read();
 
-  // consume the current character and add it to the lexeme
+  // consume a character after it is matched
   void consume();
 
-  // skip insiginficant characters
+  // skip insignificant / non-token input
   void skip();
 
-  // attempt to match single character tokens
+  // attempt to match a single character token, return true on success
   bool lex_single();
 
   // attempt to match a number
   bool lex_number();
 
-  // attempt to match a keyword or identifier
+  // attempt to match a keyword or an id
   bool lex_kw_or_id();
+
+  // attempt to match a fixed-width unconstrained token
+  bool lex_fixed();
 };
 
 #endif

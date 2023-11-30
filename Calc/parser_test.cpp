@@ -1,15 +1,13 @@
-// Test the parser
+// File: parser_test.cpp
+// Purpose: A small program to test the parser
 #include <iostream>
 #include "parser.h"
+#include "lexer.h"
 
 int main()
 {
-  // make a lexer on the cin stream
   Lexer *lex = new Lexer(std::cin);
-
-  // create the parser
   Parser parser(lex);
 
-  // run the parser
   parser.parse()->print(0);
 }

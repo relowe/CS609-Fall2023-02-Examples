@@ -1,39 +1,44 @@
 // File: parser.h
-// Purpose: Class definition for a recursive descent parser.
+// Purpose: Class definition of a recursive descent parser.
 #include "lexer.h"
 #include "parse_tree.h"
 
-class Parser 
+class Parser
 {
 public:
-  // construct a parser for a given lexer
+  // constructor
   Parser(Lexer *_lex);
 
-  // attempt to parse the program
-  Parse_Tree* parse();
+  // attempt to parse the program which the lexer provides
+  Parse_Tree *parse();
 
 private:
-  Lexer *_lex;    // lexer for the stream we are parsing
+  Lexer *_lex;
 
-  ////////////////////////////////////////
-  // Lexer Convenience Interface
-  ////////////////////////////////////////
+  //////////////////////////////////////////
+  // Lexer Convenience Functions
+  //////////////////////////////////////////
 
-  // return true if we have the given token in the buffer, false otherwise
+  // Returns true if the current token matches tok
+  // Returns false otherwise
   bool has(Token tok);
 
-  // return true if we have the given token, report error otherwise
-  // this will terminate the program on error
+  // Returns true if the current token matches tok
+  // Prints an error message and aborts the program otherwise
   bool must_be(Token tok);
 
-  // return the current token and advance the lexer
-  Lexer_Token consume(); 
+  // Return the current token and advance the lexer.
+  Lexer_Token consume();
 
-  ////////////////////////////////////////
-  // Recursive Descent Parser Rules
-  ////////////////////////////////////////
+  //////////////////////////////////////////
+  // Recursive Descent Parser functions
+  //////////////////////////////////////////
   Parse_Tree* parse_Program();
   Parse_Tree* parse_Statement();
+  Parse_Tree* parse_Statement_Body();
+  Parse_Tree* parse_Statement2(Parse_Tree *left);
+  Parse_Tree* parse_Statement3(Parse_Tree *left);
+  Parse_Tree* parse_IO_Operation();
   Parse_Tree* parse_Expression();
   Parse_Tree* parse_Expression2(Parse_Tree *left);
   Parse_Tree* parse_Term();
@@ -42,4 +47,14 @@ private:
   Parse_Tree* parse_Factor2(Parse_Tree *left);
   Parse_Tree* parse_Base();
   Parse_Tree* parse_Number();
+  Parse_Tree* parse_Record_Decl();
+  Parse_Tree* parse_Field_List(Record_Declaration *decl);
+  Parse_Tree* parse_Field(Record_Declaration *decl);
+  Parse_Tree* parse_Record_Inst();
+  Parse_Tree* parse_Branch();
+  Parse_Tree* parse_Loop();
+  Parse_Tree* parse_Condition();
+  Parse_Tree* parse_Condition2(Parse_Tree *left);
+  Parse_Tree* parse_Ref();
+  Parse_Tree* parse_Ref2(Parse_Tree *left);
 };

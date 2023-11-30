@@ -11,7 +11,7 @@ class Shape_Add: public Menu_Item
 public:
     virtual std::string label();
     virtual void selected();
-}
+};
 class Square: public shape {
 public:
  square(int a = 0, int b = 0):shape(a,b) {}

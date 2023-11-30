@@ -119,6 +119,7 @@ Parse_Tree* Parser::parse_Statement() {
                        | < Record-Decl >
                        | < Branch >
                        | < Loop >
+                       | < Fun-Def >
                        | < Expression >
                        | ""
  */
@@ -138,7 +139,9 @@ Parse_Tree *Parser::parse_Statement_Body() {
     result = parse_Branch();
   } else if (has(WHILE)) {
     result = parse_Loop();
-  } else if (not has(NEWLINE)){
+  } else if(has(FUN)) {
+    result = parse_Fun_Def();
+  } else if(not has(NEWLINE)) {
     result = parse_Expression();
   } else {
     result = nullptr; // ""
@@ -261,6 +264,63 @@ Parse_Tree *Parser::parse_Loop() {
   consume();
   must_be(WHILE);
   consume();
+  return result;
+}
+
+
+/*
+< Function-Def > ::= FUN ID LPAREN < Param-List > RPAREN NEWLINE < Program > END FUN
+*/
+Parse_Tree* Parser::parse_Fun_Def() {
+  must_be(FUN);  
+  consume();
+  must_be(ID);
+  Lexer_Token id = consume();
+  must_be(LPAREN);
+  consume();
+  Parse_Tree* plist = parse_Param_List();
+  must_be(RPAREN);
+  consume();
+  must_be(NEWLINE);
+  consume();
+  Parse_Tree* program = parse_Program();
+  must_be(END);
+  consume();
+  must_be(FUN);
+  consume();
+
+  Fun_Def *result = new Fun_Def(id);
+  result->left(plist);
+  result->right(program);
+  return (Parse_Tree*) result;  
+}
+
+
+/*
+< Param-List >   ::= < NV-Param-List >
+                     | ""
+
+< NV-Param-List > ::= < NV-Param-List > COMMA ID
+                      | ID
+*/
+Parse_Tree* Parser::parse_Param_List() {
+  Parse_List *result = new Parse_List();
+  bool done;
+
+  // check for an empty list
+  if(not has(ID)) { return result;}
+
+  do {
+    must_be(ID);
+    result->add(new Variable(consume()));
+    if(has(COMMA)) {
+      done = false;    
+      consume();
+    } else {
+      done = true;
+    }
+  } while(not done);
+
   return result;
 }
 
@@ -509,6 +569,7 @@ Parse_Tree *Parser::parse_Ref() {
 
 /*
 < Ref' >         ::= DOT ID < Ref' >
+                     | LPAREN < Arg-List > RPAREN
                      | ""
  */
 Parse_Tree *Parser::parse_Ref2(Parse_Tree *left) {
@@ -520,8 +581,45 @@ Parse_Tree *Parser::parse_Ref2(Parse_Tree *left) {
     result->right(new Variable(consume()));
 
     return parse_Ref2(result);
+  } else if(has(LPAREN)) {
+    consume();
+    Parse_Tree *alist = parse_Arg_List();
+    Fun_Call *result = new Fun_Call();
+    result->left(left);
+    result->right(alist);
+    must_be(RPAREN);
+    consume();
+    return result;
   }
 
   // null case reaches here
   return left;
+}
+
+
+/*
+< Arg-List >   ::= < NV-Arg-List >
+                     | ""
+
+< NV-Arg-List > ::= < NV-Arg-List > COMMA < Expression >
+                      | < Expression >
+*/
+Parse_Tree* Parser::parse_Arg_List() {
+  Parse_List *result = new Parse_List();
+  bool done;
+
+  // check for an empty list
+  if(not has(ID)) { return result;}
+
+  do {
+    result->add(parse_Expression());
+    if(has(COMMA)) {
+      done = false;    
+      consume();
+    } else {
+      done = true;
+    }
+  } while(not done);
+
+  return result;
 }

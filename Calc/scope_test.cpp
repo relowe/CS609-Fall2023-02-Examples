@@ -16,15 +16,18 @@ fun f() # ref 2
   g()
 end fun
 
+fun shadow(x) Ref 4
+end fun
+
 f()
+shadow(12)
 
-
-    Ref 1     Ref 2    Ref 3
-x   3         3        3
-y   1         1        1
-z   Undef     12       12
-q   Undef     7        7
-h   Undef     Undef    21
+    Ref 1     Ref 2    Ref 3   Ref 4
+x   3         3        3       12
+y   1         1        1       1
+z   Undef     12       12      Undef
+q   Undef     7        7       Undef 
+h   Undef     Undef    21      Undef
 */
 #include <iostream>
 #include "ref_env.h"
@@ -42,6 +45,7 @@ int main() {
   Ref_Env ref1; 
   Ref_Env ref2(&ref1); 
   Ref_Env ref3(&ref2);
+  Ref_Env ref4(&ref1);
   EvalResult value;
 
   value.set(1);
@@ -68,12 +72,18 @@ int main() {
   value.set(1);
   ref3.set("y", value);
 
+  value.set(12);
+  ref4.declare("x");  // a shadowed x
+  ref4.set("x", value);
+
   std::cout << "x: ";
   print_result(ref1.get("x")); 
   std::cout << ", ";
   print_result(ref2.get("x")); 
   std::cout << ", ";
   print_result(ref3.get("x")); 
+  std::cout << ", ";
+  print_result(ref4.get("x")); 
   std::cout << std::endl;
   
   std::cout << "y: ";
@@ -82,6 +92,8 @@ int main() {
   print_result(ref2.get("y")); 
   std::cout << ", ";
   print_result(ref3.get("y")); 
+  std::cout << ", ";
+  print_result(ref4.get("y")); 
   std::cout << std::endl;
   
   std::cout << "z: ";
@@ -90,6 +102,8 @@ int main() {
   print_result(ref2.get("z")); 
   std::cout << ", ";
   print_result(ref3.get("z")); 
+  std::cout << ", ";
+  print_result(ref4.get("z")); 
   std::cout << std::endl;
   
   std::cout << "q: ";
@@ -98,6 +112,8 @@ int main() {
   print_result(ref2.get("q")); 
   std::cout << ", ";
   print_result(ref3.get("q")); 
+  std::cout << ", ";
+  print_result(ref4.get("q")); 
   std::cout << std::endl;
   
   std::cout << "h: ";
@@ -106,5 +122,7 @@ int main() {
   print_result(ref2.get("h")); 
   std::cout << ", ";
   print_result(ref3.get("h")); 
+  std::cout << ", ";
+  print_result(ref4.get("h")); 
   std::cout << std::endl;
 }

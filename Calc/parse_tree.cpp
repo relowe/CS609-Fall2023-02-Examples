@@ -56,6 +56,10 @@ bool EvalResult::as_bool() {
   return _b;
 }
 
+Fun_Def *EvalResult::as_fun() {
+  return _fun;
+}
+
 // retrieve the type
 EvalType EvalResult::type() { return _type; }
 
@@ -356,7 +360,7 @@ void Variable::set(Ref_Env *env, EvalResult value) {
   env->set(_tok.lexeme, value);
 }
 
-std::string Variable::name() { return _tok.lexeme; }
+std::string Variable::name() const { return _tok.lexeme; }
 
 EvalResult Assignment::eval(Ref_Env *env) {
   EvalResult result;
@@ -757,4 +761,67 @@ void Record_Access::print(int indent) const
 
   // print the left child
   left()->print(indent + 1);
+}
+
+
+EvalResult Parse_List::eval(Ref_Env *env)
+{
+   return EvalResult(); 
+}
+
+
+void Parse_List::print(int indent) const
+{
+  // loop over the children
+  for (auto itr = begin(); itr != end(); itr++) {
+    (*itr)->print(indent + 1);
+  }
+}
+
+
+Fun_Def::Fun_Def (const Lexer_Token &tok) : var(tok)
+{
+}
+
+
+EvalResult Fun_Def::eval(Ref_Env *env)
+{
+  //TODO: Handle this  
+  return EvalResult();
+}
+
+
+std::string Fun_Def::name() const 
+{
+  return var.name();
+}
+
+
+void Fun_Def::print(int indent) const
+{
+  // print ourself
+  std::cout << std::setw(indent) << "";
+  std::cout << "fun " << name() << std::endl;
+  std::cout << std::setw(indent) << "";
+  std::cout << "Parameters";
+  left()->print(indent+1);
+  std::cout << std::setw(indent) << "";
+  std::cout << "Body";
+  right()->print(indent+1);
+}
+
+
+EvalResult Fun_Call::eval(Ref_Env *env)
+{
+  //TODO: Handle this
+  return EvalResult();
+}
+
+
+void Fun_Call::print(int indent) const
+{
+  std::cout << std::setw(indent) << "";
+  std::cout << "function call " << std::endl;
+  left()->print(indent+1);
+  right()->print(indent+1);
 }

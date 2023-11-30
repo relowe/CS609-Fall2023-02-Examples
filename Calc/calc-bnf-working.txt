@@ -20,6 +20,7 @@ Parser (Context-Free)
                      | < Record-Decl > 
                      | < Branch >
                      | < Loop >
+                     | < Function-Def >
                      | < Expression > 
                      | ""
 
@@ -44,6 +45,15 @@ Parser (Context-Free)
 < Branch >       ::= IF < Condition > NEWLINE < Program > END IF
 
 < Loop >         ::= WHILE < Condition > NEWLINE < Program > END WHILE
+
+
+< Function-Def > ::= FUN ID LPAREN < Param-List > RPAREN NEWLINE < Program > END FUN
+
+< Param-List >   ::= < NV-Param-List >
+                     | ""
+
+< NV-Param-List > ::= < NV-Param-List > COMMA ID
+                      | ID
 
 < Condition >    ::= < Expression > < Condition' >
 
@@ -81,7 +91,14 @@ Parser (Context-Free)
 < Ref >          ::= ID < Ref' >
 
 < Ref' >         ::= DOT ID < Ref' >
+                     | LPAREN < Arg-List > RPAREN
                      | ""
+                     
+< Arg-List >      ::= < NV-Arg-List > 
+                      | ""
+
+< NV-Arg-List >   ::= < NV-Arg-List > COMMA < Expression > 
+                      | < Expression >
 
 
 Lexer (Regular)
@@ -113,6 +130,8 @@ LT             <
 GT             >
 LTE            <=
 GTE            >=
+FUN            fun
+COMMA          ,
 
 Hidden/Utilitiy Tokens
 ======================

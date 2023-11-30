@@ -25,7 +25,7 @@ Lexer_Token::Lexer_Token(Token tok, const std::string &lexeme, int line,
 std::ostream &operator<<(std::ostream &os, const Lexer_Token &t) {
   static std::string token_label[] = {
       "INVALID", "EOI", "NEWLINE", "PLUS",   "MINUS",  "TIMES",  "DIVIDE",
-      "MOD",     "POW", "LPAREN",  "RPAREN", "INTLIT", "REALLIT", "EQUAL", "DISPLAY", "INPUT", "ID", "DOT", "NEW", "RECORD", "END", "FIELD", "IF", "WHILE", "NE", "LT", "GT", "LTE", "GTE"};
+      "MOD",     "POW", "LPAREN",  "RPAREN", "INTLIT", "REALLIT", "EQUAL", "DISPLAY", "INPUT", "ID", "DOT", "NEW", "RECORD", "END", "FIELD", "IF", "WHILE", "NE", "LT", "GT", "LTE", "GTE", "FUN", "COMMA"};
   return os << token_label[t.tok] << " \"" << t.lexeme << "\" Line: " << t.line
             << " Column " << t.col;
 }
@@ -125,6 +125,7 @@ bool Lexer::lex_single() {
   tokens[')'] = RPAREN;
   tokens['='] = EQUAL;
   tokens['.'] = DOT;
+  tokens[','] = COMMA;
 
   // search for the current character in our map
   auto itr = tokens.find(_cur_char);
@@ -193,6 +194,7 @@ bool Lexer::lex_kw_or_id() {
   tokens["field"] = FIELD;
   tokens["if"] = IF;
   tokens["while"] = WHILE;
+  tokens["fun"] = FUN;
 
   // check to see if it starts properly
   if(_cur_char != '_' and not isalpha(_cur_char)){return false;}

@@ -35,7 +35,9 @@ enum Token {
   LT,
   GT,
   LTE,
-  GTE
+  GTE,
+  FUN,
+  COMMA
 };
 
 // Tokens as emitted by the lexer

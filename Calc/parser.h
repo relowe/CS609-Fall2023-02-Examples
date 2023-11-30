@@ -53,8 +53,11 @@ private:
   Parse_Tree* parse_Record_Inst();
   Parse_Tree* parse_Branch();
   Parse_Tree* parse_Loop();
+  Parse_Tree* parse_Fun_Def();
+  Parse_Tree* parse_Param_List();
   Parse_Tree* parse_Condition();
   Parse_Tree* parse_Condition2(Parse_Tree *left);
   Parse_Tree* parse_Ref();
   Parse_Tree* parse_Ref2(Parse_Tree *left);
+  Parse_Tree* parse_Arg_List();
 };

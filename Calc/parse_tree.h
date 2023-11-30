@@ -8,11 +8,12 @@
 
 // class prototype
 class Ref_Env;
+class Fun_Def;
 
 //////////////////////////////////////////
 // Evaluation Results
 //////////////////////////////////////////
-enum EvalType {VOID, INTEGER, REAL, UNDEFINED, BOOLEAN};
+enum EvalType {VOID, INTEGER, REAL, UNDEFINED, BOOLEAN, FUNCTION};
 class EvalResult
 {
 public:
@@ -30,6 +31,7 @@ public:
   virtual int as_integer();
   virtual double as_real();
   virtual bool as_bool();
+  virtual Fun_Def* as_fun();
 
   // retrieve the type
   virtual EvalType type();
@@ -38,6 +40,7 @@ private:
   double _d;       // a real number
   bool _b;         // a boolean value
   EvalType _type;  // the type
+  Fun_Def* _fun;    // a function definition 
 };
 
 //////////////////////////////////////////
@@ -173,7 +176,7 @@ public:
   virtual void print(int indent) const;
 
   virtual void set(Ref_Env *env, EvalResult value);
-  virtual std::string name();
+  virtual std::string name() const;
 private:
   Lexer_Token _tok;
 };
@@ -277,6 +280,32 @@ public:
 
 
 class Record_Access : public BinaryOp {
+public:
+  virtual EvalResult eval(Ref_Env *env);
+  virtual void print(int indent) const;
+};
+
+
+class Parse_List : public NaryOp {
+public:
+  virtual EvalResult eval(Ref_Env *env);
+  virtual void print(int indent) const;
+};
+
+
+class Fun_Def: public BinaryOp {
+public:
+  Fun_Def (const Lexer_Token &tok);
+  virtual EvalResult eval(Ref_Env *env);
+  virtual void print(int indent) const;
+  virtual std::string name() const;
+
+private:
+  Variable var;
+};
+
+
+class Fun_Call : public BinaryOp {
 public:
   virtual EvalResult eval(Ref_Env *env);
   virtual void print(int indent) const;
